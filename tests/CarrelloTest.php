@@ -32,10 +32,10 @@ abstract class CarrelloTest extends WebTestCase
         $this->connection->beginTransaction();
     }
 
-    protected function tearDown(): void
-    {
-        $this->connection->rollback();
-        parent::tearDown();
-    }
+    // protected function tearDown(): void
+    // {
+    //     $this->connection->rollback();
+    //     parent::tearDown();
+    // }
     
 }
