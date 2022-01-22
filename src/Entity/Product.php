@@ -29,9 +29,13 @@ class Product
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductsInCart::class)]
+    private $productsInCarts;
+
     public function __construct()
     {
         $this->uuid = Uuid::v4();
+        $this->productsInCarts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -71,6 +75,36 @@ class Product
     public function setUuid(string $uuid): self
     {
         $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductsInCart[]
+     */
+    public function getProductsInCarts(): Collection
+    {
+        return $this->productsInCarts;
+    }
+
+    public function addProductsInCart(ProductsInCart $productsInCart): self
+    {
+        if (!$this->productsInCarts->contains($productsInCart)) {
+            $this->productsInCarts[] = $productsInCart;
+            $productsInCart->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductsInCart(ProductsInCart $productsInCart): self
+    {
+        if ($this->productsInCarts->removeElement($productsInCart)) {
+            // set the owning side to null (unless already changed)
+            if ($productsInCart->getProduct() === $this) {
+                $productsInCart->setProduct(null);
+            }
+        }
 
         return $this;
     }
