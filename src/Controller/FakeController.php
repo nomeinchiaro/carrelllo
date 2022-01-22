@@ -6,14 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AddProductController extends AbstractController
+class FakeController extends AbstractController
 {
-    #[Route('/add/product', name: 'add_product')]
+    #[Route('/fake', name: 'fake')]
     public function index(): Response
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/AddProductController.php',
+        return $this->render('fake/index.html.twig', [
+            'controller_name' => 'FakeController',
         ]);
     }
 }

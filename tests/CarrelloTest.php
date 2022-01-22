@@ -2,6 +2,8 @@
 
 namespace App\Tests;
 
+use App\Repository\ProductRepository;
+use App\Repository\ShoppingCartRepository;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 abstract class CarrelloTest extends WebTestCase
@@ -12,14 +14,28 @@ abstract class CarrelloTest extends WebTestCase
 
     protected $connection;
 
+    protected ProductRepository $productRepository;
+
+    protected ShoppingCartRepository $shoppingCartRepository;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->client = static::createClient();
+
         $this->manager = static::getContainer()->get('doctrine.orm.entity_manager');
+        $this->productRepository = static::getContainer()->get(ProductRepository::class);
+        $this->shoppingCartRepository = static::getContainer()->get(ShoppingCartRepository::class);
 
         $this->connection = $this->manager->getConnection();
-        $this->connection->beginTransaction(); // this disable autocommit
+        $this->connection->beginTransaction();
     }
+
+    protected function tearDown(): void
+    {
+        $this->connection->rollback();
+        parent::tearDown();
+    }
+    
 }

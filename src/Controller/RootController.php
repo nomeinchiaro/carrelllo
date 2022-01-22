@@ -12,6 +12,17 @@ class RootController extends AbstractController
     public function index(): Response
     {
         $it = 'works';
-        return $this->json(compact('it'));
+        $how = 'well';
+        $pwd = __FILE__;
+
+        return $this->json(compact('it', 'how', 'pwd'));
+    }
+
+    #[Route('/root', name: 'root_root')]
+    public function root(): Response
+    {
+        return $this->json([
+            'ciao' => 'mondo',
+        ]);
     }
 }
