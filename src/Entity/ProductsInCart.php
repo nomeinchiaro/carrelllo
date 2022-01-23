@@ -4,8 +4,15 @@ namespace App\Entity;
 
 use App\Repository\ProductsInCartRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ORM\Entity(repositoryClass: ProductsInCartRepository::class)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['read']],
+    denormalizationContext: ['groups' => ['write', 'foo']],
+)]
 class ProductsInCart
 {
     #[ORM\Id]
@@ -15,12 +22,15 @@ class ProductsInCart
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'productsInCarts')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["foo"])]
     private $product;
 
     #[ORM\ManyToOne(targetEntity: ShoppingCart::class, inversedBy: 'productsInCarts')]
+    #[Groups(["write", "foo"])]
     private $cart;
 
     #[ORM\Column(type: 'integer')]
+    #[Groups(["read", "foo"])]
     private $quantity;
 
     public function getId(): ?int

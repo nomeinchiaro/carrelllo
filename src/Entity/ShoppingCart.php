@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 #[ApiResource(
     normalizationContext: ['groups' => ['read']],
@@ -29,6 +30,7 @@ class ShoppingCart
 
     #[ORM\OneToMany(mappedBy: 'cart', targetEntity: ProductsInCart::class)]
     #[Groups(["read"])]
+    #[MaxDepth(1)]
     private $productsInCarts;
 
     public function __construct()

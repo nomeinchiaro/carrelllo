@@ -9,9 +9,13 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
-#[ApiResource]
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['read']],
+    denormalizationContext: ['groups' => ['write', 'foo']],
+)]
 class Product
 {
     #[ORM\Id]
@@ -23,13 +27,15 @@ class Product
     #[Groups(["read", "write"])]
     private $uuid;
 
-    #[ORM\Column(type: 'string', length: 10)]
+    #[ORM\Column(type: 'string', length: 10, unique: true)]
+    #[Groups(["read", "foo"])]
     private $sku;
 
     #[ORM\Column(type: 'string', length: 255)]
     private $name;
 
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductsInCart::class)]
+    #[MaxDepth(1)]
     private $productsInCarts;
 
     public function __construct()

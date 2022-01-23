@@ -34,7 +34,7 @@ class AddItemControllerTest extends CarrelloTest
         $this->productRepository->createProduct($first);
 
         $second = new Product;
-        $second->setSku(42);
+        $second->setSku(43);
         $second->setName('First Product');
         $this->productRepository->createProduct($second);
 
