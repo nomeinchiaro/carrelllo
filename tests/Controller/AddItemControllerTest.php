@@ -31,7 +31,7 @@ class AddItemControllerTest extends CarrelloTest
     }
 
     /** @test */
-    public function zero(): void
+    public function shouldDoNothingOnAddingZeroItemOfProduct(): void
     {
         $first = new Product;
         $first->setSku(42);
