@@ -1,7 +1,4 @@
-default: tests
-
-tests:
-	./bin/phpunit --color
+default: test
 
 down:
 	docker-compose down
@@ -11,6 +8,9 @@ up:
 
 test:
 	docker-compose exec server bash -c "./vendor/bin/phpunit --color --testdox --stop-on-failure"
+
+coverage:
+	docker-compose exec server bash -c "XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-html coverage"
 
 router:
 	docker-compose exec server bash -c "./bin/console debug:router"
