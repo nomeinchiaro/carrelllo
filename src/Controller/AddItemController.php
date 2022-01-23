@@ -38,8 +38,13 @@ class AddItemController extends AbstractController
             $productInCart->setCart($concreteCart);
         }
 
-        $productInCart->setQuantity($quantity);
-        $manager->persist($productInCart);
+        if ($quantity === 0 || $productInCart != null) {
+            $manager->remove($productInCart);
+        } else {
+            $productInCart->setQuantity($quantity);
+            $manager->persist($productInCart);
+        }
+
         $manager->flush();
 
         return $this->json([
