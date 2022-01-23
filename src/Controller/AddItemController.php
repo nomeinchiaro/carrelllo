@@ -15,9 +15,9 @@ class AddItemController extends AbstractController
 {
     #[Route('/add/item/{cart}/{product}/{quantity}', name: 'add_item')]
     public function index(
-        $cart,
-        $product,
-        $quantity,
+        string $cart,
+        string $product,
+        int $quantity,
         ShoppingCartRepository $shoppingCartRepository,
         ProductRepository $productRepository,
         ProductsInCartRepository $productsInCartRepository,
@@ -27,30 +27,50 @@ class AddItemController extends AbstractController
         $concreteCart = $shoppingCartRepository->findOneByUuid($cart);
         $concreteProduct = $productRepository->findOneByUuid($product);
 
-        $productInCart = $productsInCartRepository->findOneBy([
-            'cart' => $concreteCart,
-            'product' => $concreteProduct,
-        ]);
+        $productInCart = $productsInCartRepository->findByCartAndProduct(
+            $concreteCart,
+            $concreteProduct
+        );
+
+        if ($quantity === 0 && $productInCart === null) {
+            return $this->json([
+                'message' => 'product not added'
+            ], 200);
+        }
 
         if ($productInCart === null) {
+
             $productInCart = new ProductsInCart;
-            $productInCart->setProduct($concreteProduct);
             $productInCart->setCart($concreteCart);
-        }
-
-        if ($quantity === 0 || $productInCart != null) {
-            $manager->remove($productInCart);
-        } else {
+            $productInCart->setProduct($concreteProduct);
             $productInCart->setQuantity($quantity);
+
             $manager->persist($productInCart);
+            $manager->flush();
+
+            return $this->json([
+                'message' => 'product created'
+            ], 201);
         }
 
+        if ($quantity === 0) {
+            $manager->remove($productInCart);
+            $manager->flush();
+
+            return $this->json([
+                'message' => 'product deleted'
+            ], 200);
+        }
+
+        $productInCart->setCart($concreteCart);
+        $productInCart->setProduct($concreteProduct);
+        $productInCart->setQuantity($quantity);
+
+        $manager->persist($productInCart);
         $manager->flush();
 
         return $this->json([
-            '$concreteCart' => $cart,
-            '$concreteProduct' => $product,
-            '$quantity' => $quantity,
-        ], 201);
+            'message' => 'product updated'
+        ], 200);
     }
 }

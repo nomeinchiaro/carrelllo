@@ -19,12 +19,8 @@ class CreateShoppingCartController extends AbstractController
     public function index(
         ShoppingCartRepository $repo
     ): Response {
-        try {
-            $cart = new ShoppingCart();
-            $repo->createCart($cart);
-        } catch (\Exception $e) {
-            return $this->json(['message' => $e->getMessage()], 500);
-        }
+        $cart = new ShoppingCart();
+        $repo->createCart($cart);
 
         return $this->json($cart, 201);
     }
