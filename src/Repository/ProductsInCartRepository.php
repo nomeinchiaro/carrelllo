@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Product;
 use App\Entity\ProductsInCart;
+use App\Entity\ShoppingCart;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,32 +21,20 @@ class ProductsInCartRepository extends ServiceEntityRepository
         parent::__construct($registry, ProductsInCart::class);
     }
 
-    // /**
-    //  * @return ProductsInCart[] Returns an array of ProductsInCart objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    public function createItem(ProductsInCart $productInCart)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $this->getEntityManager()->persist($productInCart);
+        $this->getEntityManager()->flush();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?ProductsInCart
+    public function findByCartAndProduct(ShoppingCart $cart, Product $product): ?ProductsInCart
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
+        return $this->createQueryBuilder('item')
+            ->andWhere('item.product = :product')
+            ->andWhere('item.cart = :cart')
+            ->setParameter('cart', $cart)
+            ->setParameter('product', $product)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
     }
-    */
 }

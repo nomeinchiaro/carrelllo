@@ -25,13 +25,4 @@ class ShoppingCartRepository extends ServiceEntityRepository
         $this->getEntityManager()->persist($cart);
         $this->getEntityManager()->flush();
     }
-
-    public function addProductToCart(ShoppingCart $cart, Product $product)
-    {
-        // $cart->addProduct($product);
-        // $product->addCart($cart);
-        // $this->getEntityManager()->persist($cart);
-        // $this->getEntityManager()->persist($cart);
-        // $this->getEntityManager()->flush();
-    }
 }
