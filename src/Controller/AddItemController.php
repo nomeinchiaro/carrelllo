@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Events;
 use App\Entity\ProductsInCart;
 use App\Repository\ProductRepository;
 use App\Repository\ProductsInCartRepository;
@@ -48,6 +49,18 @@ class AddItemController extends AbstractController
             $manager->persist($productInCart);
             $manager->flush();
 
+            // @todo move into a service, ... 
+            $event = new Events();
+            $event->setEventName('ProductAdded');
+            $event->setDatetime(new \DateTime());
+            $event->setMeta([
+                'cart' => $concreteCart->getId(),
+                'product' => $concreteProduct->getId(),
+                'quantity' => $quantity,
+            ]);
+            $manager->persist($event);
+            $manager->flush();
+
             return $this->json([
                 'message' => 'product created'
             ], 201);
@@ -55,6 +68,17 @@ class AddItemController extends AbstractController
 
         if ($quantity === 0) {
             $manager->remove($productInCart);
+            $manager->flush();
+
+            // @todo move into a service, ... 
+            $event = new Events();
+            $event->setEventName('ProductRemoved');
+            $event->setDatetime(new \DateTime());
+            $event->setMeta([
+                'cart' => $concreteCart->getId(),
+                'product' => $concreteProduct->getId(),
+            ]);
+            $manager->persist($event);
             $manager->flush();
 
             return $this->json([
@@ -67,6 +91,18 @@ class AddItemController extends AbstractController
         $productInCart->setQuantity($quantity);
 
         $manager->persist($productInCart);
+        $manager->flush();
+
+        // @todo move into a service, ... 
+        $event = new Events();
+        $event->setEventName('ProductUpdated');
+        $event->setDatetime(new \DateTime());
+        $event->setMeta([
+            'cart' => $concreteCart->getId(),
+            'product' => $concreteProduct->getId(),
+            'quantity' => $quantity,
+        ]);
+        $manager->persist($event);
         $manager->flush();
 
         return $this->json([
